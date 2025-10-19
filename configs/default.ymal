@@ -1,0 +1,9 @@
+data_root: ./data/SOTS/outdoor
+ratio: [0.8, 0.2, 0.0]   # train/val/test
+batch_size: 32
+lr: 4e-3
+epochs: 10
+crop: 64
+crop_length: 5000
+model_dir: light
+result_dir: ./result/dehaze

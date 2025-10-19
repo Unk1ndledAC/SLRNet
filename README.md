@@ -1,7 +1,6 @@
 # SLRNet: A Super Lightweight ResidualNet for Real Time Single Image Dehazing
 
 This project has been used in a ongoing paper.
-
 ## 1.Overview
 - This repo provides a light-weight, end-to-end single image dehazing network.
 - Architecture: 5 ResBlocks + 2 3×3 conv, < 50 k parameters, occupying approximately 0.2GB of VRAM.
