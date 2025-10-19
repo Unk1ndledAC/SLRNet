@@ -11,16 +11,16 @@ This project has been used in a ongoing paper.
 
 ## 2.Installation
 ```bash
-    # Python 3.10+ and CUDA 12.4 recommended
-    pip install -r requirements.txt
+# Python 3.10+ and CUDA 12.4 recommended
+pip install -r requirements.txt
 ```
 
 ## 3.Usage
 ```bash
-    # 1. train
-    python -m scripts.train
+# 1. train
+python -m scripts.train
 
-    # 2. test
-    python -m scripts.test
-
+# 2. test
+python -m scripts.test
 ```
+
