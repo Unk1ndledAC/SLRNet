@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 lr_dehaze = 4e-3
 batch_size = 32
-epochs = 10
+epochs = 5
 crop_lr = 64
 crop_length = 5000
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -53,4 +53,4 @@ def train_dehaze(data_root, split_dict, model_path='./models'):
 
 if __name__ == '__main__':
     from dehazenet.utils import make_split
-    train_dehaze('./data', make_split('./data', ratio=(0.66, 0.34, 0.0)))
+    train_dehaze('./data/RESIDE_6K/train', make_split('./data/RESIDE_6K/train', ratio=(0.8, 0.2, 0.0)))
