@@ -1,4 +1,4 @@
-import os, cv2, torch, numpy as np, tqdm
+import os, cv2, torch, numpy as np, tqdm #,time
 from dehazenet import DehazeNet
 from skimage.metrics import structural_similarity as cal_ssim
 
@@ -11,10 +11,12 @@ def test_dehaze(split_dict, out_dir, model_path='./models/best.pth'):
     net.eval()
 
     all_psnr, all_ssim = [], []
+    #time_list = []
 
     for gt_path, hazy_path in tqdm.tqdm(split_dict['test'], ncols=80):
         I = cv2.imread(hazy_path)[:, :, ::-1]
         J_gt = cv2.imread(gt_path)[:, :, ::-1]
+        
         if I.shape[:2] != J_gt.shape[:2]:
             I = cv2.resize(I, (J_gt.shape[1], J_gt.shape[0]))
 
@@ -26,19 +28,22 @@ def test_dehaze(split_dict, out_dir, model_path='./models/best.pth'):
 
         tensor = torch.from_numpy(I).permute(2, 0, 1).unsqueeze(0) / 255.0
         tensor = tensor.to(device)
-
+        #tic = time.time()
         J_hat = net(tensor).clamp(0, 1)
+        #toc = time.time()
         J_hat_np = (J_hat * 255).cpu().squeeze(0).permute(1, 2, 0).detach().numpy().astype(np.uint8)
-
         xxxx = os.path.splitext(os.path.basename(gt_path))[0]
         cv2.imwrite(os.path.join(out_dir, f'{xxxx}_dehaze.png'), J_hat_np[:, :, ::-1])
 
         mse = np.mean((J_hat_np.astype(np.float32) - J_gt.astype(np.float32)) ** 2)
         psnr = 20 * np.log10(255.) - 10 * np.log10(mse + 1e-10)
         ssim = cal_ssim(J_hat_np, J_gt, channel_axis=2, data_range=255)
+        
+        #time_list.append((toc - tic)*1000)
         all_psnr.append(psnr)
         all_ssim.append(ssim)
 
+    #print(f'[Test] Time per image: AVG={np.mean(time_list):.2f} ms | 'f'MAX={np.max(time_list):.2f} ms | MIN={np.min(time_list):.2f} ms')
     print(f'[Test] AVG: PSNR={np.mean(all_psnr):.2f} SSIM={np.mean(all_ssim):.4f}')
     print(f'[Test] MAX: PSNR={np.max(all_psnr):.2f} SSIM={np.max(all_ssim):.4f}')
     print(f'[Test] MIN: PSNR={np.min(all_psnr):.2f} SSIM={np.min(all_ssim):.4f}')
@@ -47,4 +52,4 @@ def test_dehaze(split_dict, out_dir, model_path='./models/best.pth'):
 
 if __name__ == '__main__':
     from dehazenet.utils import make_split
-    test_dehaze(make_split('./data', ratio=(0.0, 0.0, 1.0)), out_dir='./result')
+    test_dehaze(make_split('./data/SOTS/outdoor', ratio=(0.0, 0.0, 1.0)), out_dir='./result')
