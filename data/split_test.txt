@@ -1,3 +1,0 @@
-./data\gt\0006.jpg,./data\hazy\0006.jpg
-./data\gt\0016.jpg,./data\hazy\0016.jpg
-./data\gt\0004.jpg,./data\hazy\0004.jpg
