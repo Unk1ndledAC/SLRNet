@@ -1,9 +1,9 @@
-data_root: ./data
-ratio: [0.8, 0.2, 0.0]   # train/val/test
 batch_size: 32
 lr: 4e-3
-epochs: 5
+epochs: 10
 crop: 64
 crop_length: 5000
-model_dir: ./models
+
+data_root: ./data/RESIDE_6K
+model_dir: ./weights
 result_dir: ./result
