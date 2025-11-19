@@ -6,7 +6,9 @@ This project has been used in a ongoing paper.
 - Architecture: 3×3 conv + 5x (GhostModule + SEModule) + 5x ResBlocks + 3×3 conv, *computational cost: 4.9 GFLOPs, parameters: 100.6 K*.  
   ***Notice:*** A standalone GhostModule, SEModule, or ResBlock can each perform dehazing on its own; however, compared with the full model their PSNR and SSIM drop by 6.1 %~13.6 % and 1.6 %~8.2 %, respectively. Therefore, the N × (GhostModule + SEModule) + M × ResBlock architecture is still recommended.  
   ***Computational cost and parameters among modules:***  
-  **GhostModule**: 39.338 MFLOPs & 0.720K, **SEModule**: 1.607 MFLOPs & 0.552K, **ResBlock**: 0.924 GFLOPs & 18.496K
+  **GhostModule**: 39.338 MFLOPs & 0.720K,  
+  **SEModule**: 1.607 MFLOPs & 0.552K,  
+  **ResBlock**: 0.924 GFLOPs & 18.496K
 - Loss: L1 + VGG-19 perceptual + FFT frequency loss. If only L1 loss is used, it will result in a performance degradation of about 2.2%.
 - 5~10 epochs of training is recommanded for RESIDE-6K.
 - On SOTS-outdoor (as test dataset) it reaches 34.33 dB PSNR / 0.9782 SSIM MAX and 25.21 dB PSNR / 0.9277 SSIM AVG after 10 epochs.
@@ -22,8 +24,8 @@ pip install -r requirements.txt
 ```
 
 ## 3.Usage
-##### Specify the training-set path in `./scripts/train.py.`
-##### Specify the test-set path in `./scripts/test.py.`
+1. Specify the training-set path in `./scripts/train.py.`
+2. Specify the test-set path in `./scripts/test.py.`
 ```bash
 # 1. train
 python -m scripts.train
@@ -31,6 +33,7 @@ python -m scripts.train
 # 2. test
 python -m scripts.test
 ```
+
 
 
 
