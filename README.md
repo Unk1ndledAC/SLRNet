@@ -4,6 +4,12 @@ This project has been used in a ongoing paper.
 ## 1.Overview
 - This repo provides a light-weight, end-to-end single image dehazing network.
 - Architecture: 3×3 conv + 5x (GhostModule + SEModule) + 5x ResBlocks + 3×3 conv, *computational cost: 4.9 GFLOPs, parameters: 100.6 K*.
+  **Notice**: A standalone GhostModule, SEModule, or ResBlock can each perform dehazing on its own; however, compared with the full model their PSNR and SSIM drop by 6.1 %~13.6 % and 1.6 %~8.2 %, respectively. Therefore, the N × (GhostModule + SEModule) + M × ResBlock architecture is still recommended.
+| Module      | MFLOPs  | Parameters (K) |
+|-------------|---------|----------------|
+| GhostModule | 39.338M | 0.720          |
+| SEModule    | 1.607M  | 0.552          |
+| ResBlock    | 0.924G  | 18.496         |
 - Loss: L1 + VGG-19 perceptual + FFT frequency loss. If only L1 loss is used, it will result in a performance degradation of about 2.2%.
 - 5~10 epochs of training is recommanded for RESIDE-6K.
 - On SOTS-outdoor (as test dataset) it reaches 34.33 dB PSNR / 0.9782 SSIM MAX and 25.21 dB PSNR / 0.9277 SSIM AVG after 10 epochs.
@@ -28,5 +34,6 @@ python -m scripts.train
 # 2. test
 python -m scripts.test
 ```
+
 
 
