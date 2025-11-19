@@ -59,13 +59,17 @@ class DehazeNet(nn.Module):
         super().__init__()
         self.pipeline = nn.Sequential(
             nn.Conv2d(3, 32, 3, 1, 1),
-            GhostModule(32, 32),
-            SEModule(32),
+            GhostModule(32, 32), SEModule(32),
+            GhostModule(32, 32), SEModule(32),
+            GhostModule(32, 32), SEModule(32),
+            GhostModule(32, 32), SEModule(32),
+            GhostModule(32, 32), SEModule(32),
             ResBlock(32), ResBlock(32), 
-            ResBlock(32),
-            ResBlock(32), ResBlock(32),
+            ResBlock(32), 
+            ResBlock(32), ResBlock(32), 
             nn.Conv2d(32, 3, 3, 1, 1)
         )
     def forward(self, x):
         return self.pipeline(x)
         
+
