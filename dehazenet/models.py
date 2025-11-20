@@ -25,12 +25,12 @@ class GhostModule(nn.Module):
         self.pipeline1 = nn.Sequential(
             nn.Conv2d(inp, ch1, 1, 1, 0, bias=False),
             nn.BatchNorm2d(ch1),
-            nn.ReLU(inplace=True),
+            nn.ReLU(True),
         )
         self.pipeline2 = nn.Sequential(
             nn.Conv2d(ch1, ch2, 3, 1, 1, groups=ch1, bias=False),
             nn.BatchNorm2d(ch2),
-            nn.ReLU(inplace=True),
+            nn.ReLU(True),
         )
 
     def forward(self, x):
@@ -63,3 +63,4 @@ class DehazeNet(nn.Module):
     def forward(self, x):
         return self.pipeline(x)
         
+
