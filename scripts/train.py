@@ -1,12 +1,11 @@
 import os, torch, tqdm
 from dehazenet import DehazeNet, loss_dehaze, HazyDataset
 from torch.utils.data import DataLoader
-#from dehazenet.metrics import calc_psnr, calc_ssim
 
 lr_dehaze = 4e-3
 batch_size = 32
 epochs = 10
-crop_lr = 64
+crop_lr = 128
 crop_length = 5000
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -33,14 +32,10 @@ def train_dehaze(train_pairs, model_path='weights'):
 
             with torch.no_grad():
                 running['loss'] += loss.item() * I.size(0)
-                #running['psnr'] += calc_psnr(J_hat.clamp(0,1), J.clamp(0,1)) * I.size(0)
-                #running['ssim'] += calc_ssim(J_hat.clamp(0,1), J.clamp(0,1)) * I.size(0)
                 running['cnt']  += I.size(0)
                 
             pbar.set_description(
                 f'[Epoch {epoch}] L={running["loss"]/running["cnt"]:.4f} '
-                #f'P={running["psnr"]/running["cnt"]:.2f} '
-                #f'S={running["ssim"]/running["cnt"]:.4f}'
             )
         sched.step()
         
