@@ -62,5 +62,3 @@ class DehazeNet(nn.Module):
 
     def forward(self, x):
         return self.pipeline(x)
-        
-
