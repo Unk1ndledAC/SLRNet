@@ -13,4 +13,5 @@ def calc_ssim(x, y):
         ssim += cal_ssim(x[i].permute(1, 2, 0).cpu().numpy(),
                          y[i].permute(1, 2, 0).cpu().numpy(),
                          channel_axis=2, data_range=255)
+
     return ssim / x.size(0)
