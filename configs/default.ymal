@@ -1,7 +1,7 @@
 batch_size: 32
 lr: 4e-3
 epochs: 10
-crop: 64
+crop: 128
 crop_length: 5000
 
 data_root: ./data/RESIDE_6K
