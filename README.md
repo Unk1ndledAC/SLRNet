@@ -10,7 +10,7 @@ This project has been used in a ongoing paper.
   **SEModule**: 1.607 MFLOPs & 0.552K,  
   **ResBlock**: 0.924 GFLOPs & 18.496K
 - Loss: L1 + VGG-19 perceptual + FFT frequency loss. If only L1 loss is used, it will result in a performance degradation of about 2.2%.
-- This model was trained on the RESIDE-6K dataset, which comprises 3 000 indoor and 3 000 outdoor samples for training, and evaluated on the SOTS test set. After 10 epochs, it reaches 33.91 dB PSNR / 0.9852 SSIM MAX and 25.35 dB PSNR / 0.9354 SSIM AVG on SOTS-outdoor.
+- This model was trained on the RESIDE-6K dataset, which comprises 3 000 indoor and 3 000 outdoor samples for training, and evaluated on the SOTS test set. After 10 epochs, it reaches 35.38 dB PSNR / 0.9852 SSIM MAX and 25.49 dB PSNR / 0.9379 SSIM AVG on SOTS-outdoor.
 - 10 epochs of training is recommanded.
 - It costs 15 s each training epoch and 2.9 GB of VRAM in total on RTX 4070 Ti Super.  
   ***Notice:*** The crop size (parameter `crop_lr` in `./scripts/train.py`) defaults to 128. Setting it to 64 cuts the per-epoch training time to about 4 s and reduces GPU memory usage to 0.9 GB, but it may introduce a 0.2 %~0.5 % performance drop and larger performance fluctuations.
@@ -34,6 +34,7 @@ python -m scripts.train
 # 2. test
 python -m scripts.test
 ```
+
 
 
 
