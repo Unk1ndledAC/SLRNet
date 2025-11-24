@@ -35,6 +35,8 @@ python -m scripts.train
 python -m scripts.test
 ```
 
+## 4.Dataset  
+The dataset (RESIDE) is provided by Li et al.'s **Benchmarking Single-Image Dehazing and Beyond** [[arXiv](https://arxiv.org/abs/1712.04143)].
 
 
 
