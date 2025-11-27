@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 lr_dehaze = 4e-3
 batch_size = 32
 epochs = 10
-crop_lr = 128
+crop_lr = 256
 crop_length = 5000
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -47,3 +47,4 @@ if __name__ == '__main__':
     from dehazenet.utils import get_pairs
     train_pairs = get_pairs('./data/RESIDE_6K/train')
     train_dehaze(train_pairs)
+
