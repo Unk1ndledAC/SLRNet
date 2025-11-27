@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 class HazyDataset(Dataset):
-    def __init__(self, pairs, crop=128, length=None, preload=False):
+    def __init__(self, pairs, crop=256, length=None, preload=False):
         self.crop   = crop
         self.pairs  = pairs
         self.trans  = transforms.ToTensor()
@@ -15,8 +15,8 @@ class HazyDataset(Dataset):
         if preload:
             self.data = []
             for gp, hp in tqdm.tqdm(self.pairs, desc='Pre-loading'):
-                j = cv2.imread(gp)[:,:,::-1]
-                i = cv2.imread(hp)[:,:,::-1]
+                j = cv2.imread(gp)[:,:,::-1].copy()
+                i = cv2.imread(hp)[:,:,::-1].copy()
                 if i.shape != j.shape:
                     i = cv2.resize(i, (j.shape[1], j.shape[0]))
                 self.data.append((self.trans(i), self.trans(j)))
@@ -31,8 +31,8 @@ class HazyDataset(Dataset):
             I, J = self.data[idx]
         else:                    
             gp, hp = self.pairs[idx]
-            j = cv2.imread(gp)[:,:,::-1]
-            i = cv2.imread(hp)[:,:,::-1]
+            j = cv2.imread(gp)[:,:,::-1].copy()
+            i = cv2.imread(hp)[:,:,::-1].copy()
             if i.shape != j.shape:
                 i = cv2.resize(i, (j.shape[1], j.shape[0]))
             I, J = self.trans(i), self.trans(j)
@@ -45,3 +45,4 @@ class HazyDataset(Dataset):
             J = J[:, top:top+self.crop, left:left+self.crop]
         return I, J
         
+
