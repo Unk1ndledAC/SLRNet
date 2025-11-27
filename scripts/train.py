@@ -38,8 +38,6 @@ def train_dehaze(train_pairs, model_path='weights'):
                 f'[Epoch {epoch}] L={running["loss"]/running["cnt"]:.4f} '
             )
         sched.step()
-        
-        torch.save(net.state_dict(), f'{model_path}/last.pth')
     torch.save(net.state_dict(), f'{model_path}/best.pth')
     print(f'Model saved to {model_path}')
 
@@ -47,4 +45,5 @@ if __name__ == '__main__':
     from dehazenet.utils import get_pairs
     train_pairs = get_pairs('./data/RESIDE_6K/train')
     train_dehaze(train_pairs)
+
 
