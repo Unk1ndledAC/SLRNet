@@ -6,7 +6,7 @@ from skimage.metrics import structural_similarity as cal_ssim
 
 lr_dehaze     = 1e-3
 batch_size    = 32      
-epochs        = 2    
+epochs        = 100    
 crop_lr       = 256 
 crop_length   = 5000
 lambda_perc   = 0.2
@@ -313,3 +313,4 @@ if __name__ == '__main__':
     
     test_pairs = get_pairs('./data/SOTS/outdoor')  
     test_dehaze(test_pairs, model_path='./exp_SLR/best.pth')
+    
