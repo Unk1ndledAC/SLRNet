@@ -1,7 +1,7 @@
 # SLRNet: A Super Lightweight ResidualNet for Real Time Image Dehazing
 
 ## 1.Overview
-- This repo provides a light-weight, end-to-end single image dehazing network.
+- This repo provides a light-weight, end-to-end image dehazing network.
 
 ## 2.Installation
 ```bash
@@ -10,11 +10,12 @@ pip install -r requirements.txt
 ```
 
 ## 3.Usage
-1. Specify the training-set and test-setpath.
+1. Specify the training-set and test-set path.
 ```bash
 # train & test
 python -m SLRNet
 ```
+
 
 
 
