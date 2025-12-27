@@ -2,7 +2,8 @@
 
 ## 1.Overview
 - This repo provides a light-weight, end-to-end image dehazing network.
-<iframe src="fig/architecture.pdf" width="100%" height="600px"></iframe>
+
+![poster](architecture-1.png)
 
 ## 2.Installation
 ```bash
@@ -16,6 +17,7 @@ pip install -r requirements.txt
 # train & test
 python -m SLRNet
 ```
+
 
 
 
