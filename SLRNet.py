@@ -75,7 +75,7 @@ class DehazeNet(nn.Module):
         for block in self.backbone:
             feat = block(feat)
         late_feat = self.refiner(feat)
-        fused = early_feat + late_feat
+        fused = late_feat #+ early_feat
         out = self.out_proj(fused)
         return torch.clamp(out, 0.0, 1.0)
 
@@ -314,3 +314,4 @@ if __name__ == '__main__':
     test_pairs = get_pairs('./data/SOTS/outdoor')  
     test_dehaze(test_pairs, model_path='./exp_SLR/best.pth')
     
+
