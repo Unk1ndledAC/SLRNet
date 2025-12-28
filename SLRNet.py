@@ -287,13 +287,10 @@ def test_dehaze(test_pairs, out_dir='./exp_SLR/results', model_path='./exp_SLR/b
 def get_pairs(root_dir):
     gt_dir   = os.path.join(root_dir, 'GT')
     hazy_dir = os.path.join(root_dir, 'hazy')
-
     gt_list = sorted(glob.glob(os.path.join(gt_dir, '*.*'))) 
-
     hazy_dict = {}
     for hazy_path in glob.glob(os.path.join(hazy_dir, '*.*')):
         basename = os.path.splitext(os.path.basename(hazy_path))[0]
-        
         key = basename.split('_')[0]
         hazy_dict.setdefault(key, []).append(hazy_path)
         
@@ -307,12 +304,33 @@ def get_pairs(root_dir):
     print(f'Total pairs: {len(pairs)}')
     return pairs
 
+def get_pairs_(root_dir):
+    gt_dir = os.path.join(root_dir, 'GT')
+    hazy_dir = os.path.join(root_dir, 'hazy')
+    gt_list = sorted(glob.glob(os.path.join(gt_dir, '*')))
+    hazy_dict = {}
+    for p in glob.glob(os.path.join(hazy_dir, '*')):
+        key = os.path.splitext(os.path.basename(p))[0]
+        hazy_dict.setdefault(key, []).append(p)
+
+    pairs = []
+    for gp in gt_list:
+        key = os.path.splitext(os.path.basename(gp))[0]
+        if key in hazy_dict:
+            pairs.append((gp, random.choice(hazy_dict[key])))
+    print(f'Total pairs: {len(pairs)}')
+    return pairs
+
 if __name__ == '__main__':
-    train_pairs = get_pairs('./data/RESIDE_6K/train/') 
+    train_pairs = get_pairs('./data/RESIDE-6K/train/') 
     train_dehaze(train_pairs)
     
     test_pairs = get_pairs('./data/SOTS/outdoor')  
     test_dehaze(test_pairs, model_path='./exp_SLR/best.pth')
     
-
-
+    #test_pairs = get_pairs_('./data/RESIDE-6K/test/') 
+    #test_dehaze(test_pairs, model_path='./exp_SLR/best.pth')
+    
+    #test_pairs = get_pairs('./data/NH-HAZE/') 
+    #test_dehaze(test_pairs, model_path='./exp_SLR/best.pth')
+    
