@@ -3,7 +3,8 @@
 ## 1.Overview
 - This repo provides a light-weight, end-to-end image dehazing network.
 
-![poster](architecture-1.png)
+![poster](architecture.png)
+![poster](table.png)
 
 ## 2.Installation
 ```bash
