@@ -24,7 +24,7 @@ This paper has been accepted as a **Poster** at **ICIC 2026** ([Link](http://www
 ```
 @inproceedings{qu2026slrnet,
   title={SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing},
-  author={Guanheng Qu and Fan Jiang and Jiangming Liu},
+  author={Qu, Guanheng and Jiang, Fan and Liu, Jiangming},
   journal={Poster Volume I The 2026 Twenty-Second International Conference on Intelligent Computing July 22-26, 2026 Toronto, Canada},
   year={2026},
   address={Toronto, Canada},
@@ -33,17 +33,3 @@ This paper has been accepted as a **Poster** at **ICIC 2026** ([Link](http://www
   note={Accepted for publication (Poster)},
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
