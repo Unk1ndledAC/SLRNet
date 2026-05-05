@@ -59,7 +59,7 @@ class ResBlock(nn.Module):
         x = self.conv2(x)
         return x + res
 
-class DehazeNet(nn.Module):
+class SLRNet(nn.Module):
     def __init__(self, base_ch=32, n_blocks=5):
         super().__init__()
         self.in_proj = nn.Conv2d(3, base_ch, 3, padding=1)
@@ -163,7 +163,7 @@ def train_dehaze(train_pairs, model_path='./exp_SLR'):
     os.makedirs(model_path, exist_ok=True)
     checkpoint_file = os.path.join(model_path, 'latest.pth')
 
-    net = DehazeNet().to(device)
+    net = SLRNet().to(device)
     opt = torch.optim.AdamW(net.parameters(), lr=lr_dehaze, weight_decay=1e-4)
 
     start_epoch = 1
@@ -249,7 +249,7 @@ def train_dehaze(train_pairs, model_path='./exp_SLR'):
 
 def test_dehaze(test_pairs, out_dir='./exp_SLR/results', model_path='./exp_SLR/best.pth'):
     os.makedirs(out_dir, exist_ok=True)
-    net = DehazeNet().to(device)
+    net = SLRNet().to(device)
     net.load_state_dict(torch.load(model_path, map_location=device))
     net.eval()
 
