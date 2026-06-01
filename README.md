@@ -19,7 +19,7 @@ python -m SLRNet
 ```
 
 ## 4.Citation
-This paper has been accepted by **ICIC 2026** ([Link](http://www.ic-icc.cn/2026/)). [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20051973.svg)](https://doi.org/10.5281/zenodo.20051973)
+This paper has been accepted by **ICIC 2026** ([Link](http://www.ic-icc.cn/2026/)). [![DOI](https://img.shields.io/badge/DOI-zenodo.20051973-blue.svg)](https://doi.org/10.5281/zenodo.20051973)
 ```
 @inproceedings{qu2026slrnet,
   title={SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing},
