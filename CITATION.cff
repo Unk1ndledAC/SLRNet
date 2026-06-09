@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: Qu
+  given-names: Guanheng
+orcid: https://orcid.org/0009-0007-9694-8945
+title:Unk1ndledAC/SLRNet: SLRNet
+version: release
+date-released: 2026-05-06
