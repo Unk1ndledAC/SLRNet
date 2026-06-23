@@ -1,5 +1,7 @@
 # SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing
 
+[![DOI](https://img.shields.io/badge/DOI-zenodo.20051973-blue.svg)](https://doi.org/10.5281/zenodo.20051973)
+
 ## 1.Overview
 - This repo provides a light-weight, end-to-end image dehazing network.
 
@@ -19,7 +21,7 @@ python -m SLRNet
 ```
 
 ## 4.Citation
-This paper has been accepted by **ICIC 2026** ([Link](http://www.ic-icc.cn/2026/)). [![DOI](https://img.shields.io/badge/DOI-zenodo.20051973-blue.svg)](https://doi.org/10.5281/zenodo.20051973)
+This paper has been accepted by **ICIC 2026** ([Link](http://www.ic-icc.cn/2026/)).
 ```
 @inproceedings{qu2026slrnet,
   title={SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing},
