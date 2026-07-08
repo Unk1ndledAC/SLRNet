@@ -1,4 +1,4 @@
-cff-version: 1.0.0
+cff-version: 1.0.1
 message: "If you use this software, please cite it as below."
 authors:
 - family-names: Qu
@@ -11,7 +11,7 @@ authors:
   given-names: Jiangming
   orcid: https://orcid.org/0000-0002-2178-2385
 title: "SLRNet"
-version: 1.0.0
+version: 1.0.1
 doi: 10.5281/zenodo.20051973
 date-released: 2026-05-06
 url: "https://github.com/Unk1ndledAC/SLRNet"
