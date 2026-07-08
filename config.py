@@ -1,0 +1,10 @@
+lr_dehaze = 1e-3
+batch_size = 32
+epochs = 100
+crop_lr = 256
+crop_length = 5000
+lambda_perc = 0.2
+lambda_freq = 0.02
+lambda_cont = 0.01
+temperature = 1.0
+num_workers = 0
