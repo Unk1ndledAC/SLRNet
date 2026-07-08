@@ -160,28 +160,28 @@ SLRNet/
 - This work was partially supported by Yunnan Fundamental Research Projects (grant No. 202401CF070189) and the National Natural Science Foundation of China (62566064).
 > [1]
 > ```
-@ARTICLE{li2021benchmarking,
-  	author={Li, Boyi and Ren, Wenqi and Fu, Dengpan and Tao, Dacheng and Feng, Dan and Zeng, Wenjun and Wang, Zhangyang},
-  	journal={IEEE Transactions on Image Processing}, 
-  	title={Benchmarking Single-Image Dehazing and Beyond}, 
-  	year={2019},
-  	volume={28},
-  	number={1},
-  	pages={492-505},
-  	doi={10.1109/TIP.2018.2867951}
-}
+> @ARTICLE{li2021benchmarking,
+>   	author={Li, Boyi and Ren, Wenqi and Fu, Dengpan and Tao, Dacheng and Feng, Dan and Zeng, Wenjun and Wang, Zhangyang},
+>   	journal={IEEE Transactions on Image Processing}, 
+>   	title={Benchmarking Single-Image Dehazing and Beyond}, 
+>   	year={2019},
+>   	volume={28},
+>   	number={1},
+>   	pages={492-505},
+>   	doi={10.1109/TIP.2018.2867951}
+> }
 > ```
 
 > [2]
 > ```
-@INPROCEEDINGS{ancuti2020nhhaze,
-  	author    = {C. O. Ancuti and C. Ancuti and R. Timofte},
-  	title     = {{NH-HAZE}: An Image Dehazing Benchmark with Non-Homogeneous Hazy and Haze-Free Images},
-  	booktitle = {2020 {IEEE/CVF} Conference on Computer Vision and Pattern 	Recognition Workshops},
-  	year      = {2020},
-  	pages     = {1798--1805},
-  	doi       = {10.1109/CVPRW50498.2020.00230},
-}
+> @INPROCEEDINGS{ancuti2020nhhaze,
+>   	author    = {C. O. Ancuti and C. Ancuti and R. Timofte},
+>   	title     = {{NH-HAZE}: An Image Dehazing Benchmark with Non-Homogeneous Hazy and Haze-Free Images},
+>   	booktitle = {2020 {IEEE/CVF} Conference on Computer Vision and Pattern 	Recognition Workshops},
+>   	year      = {2020},
+>   	pages     = {1798--1805},
+>   	doi       = {10.1109/CVPRW50498.2020.00230},
+> }
 > ```
 
 ## Citations
