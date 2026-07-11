@@ -206,7 +206,7 @@ or
 @software{Qu_SLRNet_2026,
   author = {Qu, Guanheng and Fan, Jiang and Liu, Jiangming},
   doi = {10.5281/zenodo.20051973},
-  month = may,
+  month = jul,
   title = {{SLRNet}},
   url = {https://github.com/Unk1ndledAC/SLRNet},
   version = {1.0.1},
