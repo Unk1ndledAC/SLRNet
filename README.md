@@ -209,7 +209,7 @@ or
   month = may,
   title = {{SLRNet}},
   url = {https://github.com/Unk1ndledAC/SLRNet},
-  version = {1.0.0},
+  version = {1.0.1},
   year = {2026}
 }
 ```
