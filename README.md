@@ -186,7 +186,7 @@ SLRNet/
 
 ## Citations
 
-This paper has been accepted by  2026 22nd International Conference on Intelligent Computing ([ICIC 2026](http://www.ic-icc.cn/2026/)). If you find this work helpful, please cite:
+This paper has been accepted by *2026 22nd International Conference on Intelligent Computing* ([ICIC 2026](http://www.ic-icc.cn/2026/)). If you find this work helpful, please cite:
 
 ```
 @inproceedings{qu2026slrnet,
