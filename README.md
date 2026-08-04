@@ -201,18 +201,6 @@ This paper has been accepted by  [ICIC 2026](http://www.ic-icc.cn/2026/). If you
   doi = {10.65286/icic.v22i1.71074},
 }
 ```
-or
-```
-@software{Qu_SLRNet_2026,
-  author = {Qu, Guanheng and Jiang, Fan and Liu, Jiangming},
-  doi = {10.5281/zenodo.20051973},
-  month = may,
-  title = {{SLRNet}},
-  url = {https://github.com/Unk1ndledAC/SLRNet},
-  version = {1.0.0},
-  year = {2026}
-}
-```
 
 ## License
 
