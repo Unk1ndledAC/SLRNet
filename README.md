@@ -199,7 +199,6 @@ This paper has been accepted by  [ICIC 2026](http://www.ic-icc.cn/2026/). If you
   pages={218-231},
   note={Poster Volume Ⅰ},
   doi = {10.65286/icic.v22i1.71074},
-  url={},
 }
 ```
 or
