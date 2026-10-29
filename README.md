@@ -160,6 +160,11 @@ Counter-intuitive fact: **tiled inference does far more compute than full-image 
   title={SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing},
   author={Qu, Guanheng and Jiang, Fan and Liu, Jiangming},
   booktitle={Proceedings of International Conference on Intelligent Computing (ICIC)},
-  year={2026}
+  month={July},
+  year={2026},
+  address={Toronto, Canada},
+  pages={218--231},
+  note={Poster Volume Ⅰ},
+  doi = {10.65286/icic.v22i1.71074},
 }
 ```
