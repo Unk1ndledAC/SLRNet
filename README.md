@@ -1,207 +1,165 @@
-## SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing
+# SLRNet for Android — On-Device Real-Time Image Dehazing
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![DOI](https://img.shields.io/badge/DOI-zenodo.20051973-blue.svg)](https://doi.org/10.5281/zenodo.20051973)
+A native Android implementation of [SLRNet](https://github.com/Unk1ndledAC/SLRNet) (ICIC 2026, 96.5K parameters), running fully on-device. No network, no server, no photo ever leaves the phone.
 
-## Introduction
+## Why this stack
 
-Image dehazing aims to generate haze-free images from hazy observations. While recent deep learning approaches achieve impressive restoration quality, they suffer from excessive computational complexity and model size, hindering practical deployment on resource-constrained edge devices. Lightweight models address this but compromise on dehazing performance.
+For Android-only, cross-platform frameworks are all cost and no benefit:
 
-We propose **SLRNet** (Super Lightweight Residual Network), a high-efficiency-yet-effective end-to-end dehazing architecture that integrates a novel **Adaptive Feature Unit (AFU)** with compact residual blocks. Unlike standard channel attention mechanisms that discard spatial information, AFU employs an asymmetric split strategy to simultaneously preserve local texture details and capture global haze density through context-aware gating.
+| Decision | Choice | Rationale |
+|---|---|---|
+| Language / UI | Kotlin + ViewBinding | No plugin layer; CameraX and ONNX Runtime are first-class citizens |
+| Inference runtime | **ONNX Runtime 1.19** | `torch.onnx.export` preserves GELU's `erf` exactly; `onnx2tf` degrades it in some versions, which shows up as a washed-out output |
+| Acceleration backend | NNAPI with CPU fallback | Both backends are benchmarked at startup; the faster one wins — no assumptions |
+| Camera | CameraX 1.4 | `STRATEGY_KEEP_ONLY_LATEST` drops frames instead of queueing them |
+| Frame format | `ImageAnalysis` in `RGBA_8888` | Skips the YUV→RGB conversion |
 
-![SLRNet Architecture](figures/architecture.png)
+## Performance reality (read before setting expectations)
 
-### Key Highlights
+The model is tiny, but dehazing is a dense per-pixel computation:
 
-- **Ultra-lightweight**: Only 96.5K parameters
-- **Real-time inference**: 1.44 ms per image on RTX 4070 Ti Super
-- **Performance**: 28.78 dB PSNR / 0.9645 SSIM on SOTS-Outdoor
-- **Strong generalization**: Robust to real-world non-homogeneous haze (NH-HAZE) without domain adaptation
-- **Simple & effective**: No complex attention mechanisms, Transformers, or domain adaptation pipelines
+- ~**96.9K MAC per pixel** (3→32 projection 864 + AFU×2 ≈ 3000 + 5×ResBlock 92160 + output 864)
+- 512×512 = 262K pixels → **≈ 51 GFLOP per frame**
+- Mobile GPUs deliver ~300–500 effective GFLOPS → **100–400 ms per frame**
 
-## Architecture
+So the product shape is:
 
-SLRNet consists of three main components:
+| Mode | Resolution | Latency | Implementation |
+|---|---|---|---|
+| Live compare | 512×512 (center crop) | 100–400 ms | `FrameAnalyzer`, throttled to 150 ms |
+| Photo capture | long edge 2048, 512 tiles, overlap 64 | 3–8 s (~20 tiles) | `TiledDehazer` with cosine-window blending |
 
-1. **Shallow Feature Extraction**: A single 3×3 convolution projects the input to 32-channel feature space.
-2. **Adaptive Feature Unit (AFU)**: Dynamically recalibrates channel-wise features through:
-   - **Channel Splitting**: Splits features into two halves; only one half undergoes heavy processing
-   - **Context-Aware Gating**: Global average pooling + FC + sigmoid to generate channel attention from full context
-   - **Feature Transformation**: Depth-wise + point-wise convolutions with GELU on the processed half
-   - **Fusion**: Concatenates transformed and gated halves, restores channels via point-wise convolution
-3. **Residual Blocks**: Compact 2-layer Conv-GELU-Conv blocks with skip connections.
+**Don't expect 30 fps live preview.** The realistic outcome on a phone is a 3–6 fps refresh — perfectly fine for a capture-oriented app.
+
+## Repository layout
 
 ```
-Input → Conv3×3 → AFU → [ResBlock × N] → AFU → + skip → Conv3×3 → Output
+├── README.md
+├── .gitignore
+├── tools/
+│   ├── export_onnx.py        # .pth → .onnx, with PyTorch/ORT numeric verification
+│   └── tile_infer.py         # tiled vs. full-image PSNR comparison (pre-flight gate)
+└── android/                  # the app; open this folder in Android Studio
+    └── app/src/main/
+        ├── assets/           # slrnet.onnx lives here
+        ├── java/com/unk1ndled/slrnet/
+        │   ├── MainActivity.kt    # camera wiring, dual-path scheduling
+        │   ├── DehazeEngine.kt    # ORT session, backend benchmarking, pixel↔tensor
+        │   ├── Tiling.kt          # overlapping tiles + cosine-window blending
+        │   ├── FrameAnalyzer.kt   # frame intake, square crop, throttling
+        │   ├── ImageProxyExt.kt   # JPEG / RGBA decode paths
+        │   └── CompareView.kt     # draggable before/after slider
+        └── res/
 ```
 
-## Requirements
+## Getting started
+
+### 1. Export the model
+
+In an environment with PyTorch:
 
 ```bash
-conda create -n slrnet python=3.9
-conda activate slrnet
-pip install -r requirements.txt
+python tools/export_onnx.py \
+    --repo /path/to/SLRNet \
+    --ckpt /path/to/weight.pth \
+    --out slrnet.onnx --size 512
 ```
 
-### Dependencies
+Continue only if you see `[ok] numerics match`. If `max|PyTorch−ONNX| > 1e-4`, the Clip/GELU fusion went wrong — check the opset (default 17).
 
-- Python ≥ 3.8
-- PyTorch ≥ 2.0
-- torchvision
-- numpy
-- opencv-python
-- Pillow
-- tqdm
-- tensorboard
+A pre-exported `slrnet.onnx` is already included in `android/app/src/main/assets/`, so this step is optional for a quick start.
 
-## Dataset
-
-### Dataset Download
-
-| Dataset | Description | Link |
-|---------|-------------|------|
-| RESIDE | Synthetic indoor & outdoor | [RESIDE Homepage](https://sites.google.com/view/reside-dehaze-datasets) |
-| NH-HAZE | Real-world non-homogeneous haze | [ETH Zurich](https://data.vision.ee.ethz.ch/cvl/ntire20/nh-haze/) |
-
-The model is trained on **RESIDE-6K**, a commonly used subset of 6,000 image pairs sampled from RESIDE-OTS. The paper also evaluates on **NH-HAZE** to test generalization to real non-homogeneous haze.
-
-### Data Preparation
-
-The dataset directory is expected to contain `GT/` and `hazy/` subdirectories (matching the official RESIDE format):
-
-```
-data/
-├── RESIDE-6K/
-│   └── train/
-│       ├── GT/          # Ground truth (clear) images
-│       └── hazy/        # Hazy input images
-├── SOTS/
-│   └── outdoor/
-│       ├── GT/
-│       └── hazy/
-└── NH-HAZE/
-    ├── GT/
-    └── hazy/
-```
-
-## Training
-
-### Quick Start
+### 2. Verify the cost of tiling (don't skip)
 
 ```bash
-python main.py --mode train --train_root ./data/RESIDE-6K/train/
+python tools/tile_infer.py --onnx slrnet.onnx --image hazy.png --tile 512 --overlap 64
 ```
 
-### Monitoring
+SLRNet's AFU uses global average pooling for gating, so every tile sees a different "global" context and tiled output differs from full-image inference. The script prints PSNR/MAE and writes an error heatmap `*_seam.png`.
 
-Training progress can be monitored via TensorBoard:
+**Judge by the shape of the bright regions, not just the number.** Thin grid lines → raising overlap helps. Large blocky regions → block-level color shift; overlap won't fix it (see below).
+
+### 3. Build
+
+Open `android/` in Android Studio, or:
 
 ```bash
-tensorboard --logdir logs/
+cd android && ./gradlew assembleDebug
 ```
 
-## Evaluation
+`minSdk 26`, `targetSdk 34`, `compileSdk 36`, AGP 8.5.2 + Gradle 8.7. AGP 8 requires JDK 17; if Gradle picks up an older JDK, set `JAVA_HOME` or `org.gradle.java.home` in `android/gradle.properties`.
 
-### Quantitative Evaluation
+> **Network-restricted environments:** if `services.gradle.org` or `maven.google.com` are unreachable, point the Gradle wrapper's `distributionUrl` at a mirror (e.g. `https://mirrors.cloud.tencent.com/gradle/gradle-8.7-bin.zip`) and add `maven.aliyun.com` repositories to `settings.gradle.kts` — the layout of both files makes this a two-line change.
+
+### 4. Install and run
 
 ```bash
-python test.py --checkpoint checkpoints/best.pth --dataset SOTS
-python test.py --checkpoint checkpoints/best.pth --dataset RESIDE-6K
-python test.py --checkpoint checkpoints/best.pth --dataset NH-HAZE
+bash android/run_on_phone.sh   # detects device, installs, grants camera, launches, tails logcat
+adb logcat -s DehazeEngine     # or check the backend choice
 ```
 
-### Results
-
-![Result Table](figures/result_table.png)
-
-### Visual Comparison
-
-![Visual Comparison](figures/visual_comparison.png)
-
-## Repository Structure
+Expected log:
 
 ```
-SLRNet/
-├── README.md              # This file
-├── requirements.txt       # Python dependencies
-├── .gitignore            # Git ignore rules
-├── LICENSE               # MIT License
-├── config.py             # Configuration and hyperparameters
-├── train.py              # Training script
-├── test.py               # Evaluation script
-├── models/
-│   ├── __init__.py
-│   ├── slrnet.py         # SLRNet architecture
-│   └── afu.py            # Adaptive Feature Unit
-├── data/
-│   ├── __init__.py
-│   └── dataset.py        # Data loading and preprocessing
-├── losses/
-│   ├── __init__.py
-│   └── loss.py           # Multi-component loss functions
-├── utils/
-│   ├── __init__.py
-│   ├── crop.py           # PDF cropping utility
-│   ├── pdfToimg.py       # PDF to image converter
-│   └── size.py           # PDF dimension checker
-├── figures/
-│   ├── architecture.png  # Network architecture diagram
-│   ├── visual_comparison.png  # Visual comparison figure
-│   └── ...
-├── figures/              # Additional result figures
-└── checkpoints/          # Pre-trained model weights (download link)
+backend=nnapi tile=512px warmup=183.4ms
+backend=cpu tile=512px warmup=612.0ms
+selected backend=nnapi (183.4ms/pass)
 ```
 
-## Acknowledgements
+If NNAPI is slower than CPU, graph-partitioning fell back to per-node CPU execution — a common quirk on some SoCs. The code picks the faster backend automatically, so nothing breaks.
 
-- We thank the authors of [RESIDE](https://sites.google.com/view/reside-dehaze-datasets) [1] and [NH-HAZE](https://data.vision.ee.ethz.ch/cvl/ntire20/nh-haze/) [2] for the benchmark datasets.
-- This work was partially supported by Yunnan Fundamental Research Projects (grant No. 202401CF070189) and the National Natural Science Foundation of China (62566064).
-> [1]
-> ```
-> @ARTICLE{li2021benchmarking,
->   	author={Li, Boyi and Ren, Wenqi and Fu, Dengpan and Tao, Dacheng and Feng, Dan and Zeng, Wenjun and Wang, Zhangyang},
->   	journal={IEEE Transactions on Image Processing}, 
->   	title={Benchmarking Single-Image Dehazing and Beyond}, 
->   	year={2019},
->   	volume={28},
->   	number={1},
->   	pages={492-505},
->   	doi={10.1109/TIP.2018.2867951}
-> }
-> ```
+## Tiled-inference findings (important)
 
-> [2]
-> ```
-> @INPROCEEDINGS{ancuti2020nhhaze,
->   	author    = {C. O. Ancuti and C. Ancuti and R. Timofte},
->   	title     = {{NH-HAZE}: An Image Dehazing Benchmark with Non-Homogeneous Hazy and Haze-Free Images},
->   	booktitle = {2020 {IEEE/CVF} Conference on Computer Vision and Pattern 	Recognition Workshops},
->   	year      = {2020},
->   	pages     = {1798--1805},
->   	doi       = {10.1109/CVPRW50498.2020.00230},
-> }
-> ```
+Measured on a 1600×1200 synthetic hazy image, fixed 512 input, baseline = dynamic-shape full-image inference with the same weights:
 
-## Citations
+| overlap | PSNR (tiled vs. full) |
+|---|---|
+| 64 | 31.35 dB |
+| 128 | 32.49 dB |
+| 192 | 32.41 dB |
+| 256 | 32.45 dB |
 
-This paper has been accepted by  [ICIC 2026](http://www.ic-icc.cn/2026/). If you find this work helpful, please cite:
+**PSNR saturates after ~1 dB** — the error heatmap shows blocky regions, not grid lines.
 
-```
+Root cause: AFU's channel gate comes from GAP, so each tile's "global context" is really the tile itself, giving each tile a slightly different tone mapping. **This is block-level drift, not a boundary artifact — windowed blending cannot remove it.**
+
+Options:
+
+1. Accept it — the composite shows no visible grid, and the app ships this path.
+2. Full-image dynamic-shape inference: **infeasible**, 32 channels × 1600×1200 × 4B ≈ 245 MB per feature map, and AFU keeps early/late features simultaneously.
+3. Retrain with local-window pooling in AFU — the real fix, but it changes the published model definition.
+
+Counter-intuitive fact: **tiled inference does far more compute than full-image inference.** At overlap 256 every pixel is computed ~4×. Tiling exists to bound memory, not to save compute.
+
+## Known pitfalls
+
+1. **`noCompress += "onnx"` must stay.** Otherwise the model is compressed inside the APK, ORT cannot mmap it, and startup loads it fully into memory.
+2. **Fixed 512 input.** NNAPI rebuilds the graph for dynamic shapes, an order of magnitude slower. `PREVIEW_SIDE` must match the exported size.
+3. **Preview and CompareView must crop identically** (both center-crop to fill), or the slider sides misalign.
+4. **Capture is JPEG, preview is RGBA.** `ImageProxyExt.kt` branches on `format` — don't mix them.
+5. **On low-end devices, lower `PREVIEW_SIDE` (512→384)** rather than raising `minIntervalMs`. Latency scales with pixel count.
+6. **Capture-path memory is a hard constraint.** A 4000×3000 photo as float32 RGB is 144 MB — above most devices' Java heap, and it will throw. Therefore:
+   - `decodeJpeg` uses `inSampleSize` to cap the long edge at **2048** (small at decode time, not scaled afterwards)
+   - `TiledDehazer` never converts the whole image to float — it reads pixels tile by tile
+   - `TiledDehazer.MAX_PIXELS = 3.5M` acts as a final clamp
+   - the manifest enables `largeHeap`
+
+   Peak usage is ~95 MB. Raising `MAX_DECODE_SIDE` / `MAX_PIXELS` trades OOM risk for resolution directly.
+
+## Roadmap
+
+- **INT8 quantization**: quantize convolutions only, keep AFU's sigmoid branch in fp16 (gating saturation loses detail). Expected 1.5–2× speedup at 0.1–0.3 dB.
+- **Video pipeline**: `MediaCodec` → `SurfaceTexture` → GL sampling → inference → encode; 10–15 fps at 480p is plausible.
+- **NPU backends**: QNN EP for Snapdragon 8 Gen series, NeuroPilot for MediaTek.
+- **A/B export**: composite the original and dehazed frames into one side-by-side image for paper figures.
+
+## Citation
+
+```bibtex
 @inproceedings{qu2026slrnet,
   title={SLRNet: Super Lightweight Residual Network for Real-Time Image Dehazing},
   author={Qu, Guanheng and Jiang, Fan and Liu, Jiangming},
   booktitle={Proceedings of International Conference on Intelligent Computing (ICIC)},
-  month={July},
-  year={2026},
-  address={Toronto, Canada},
-  pages={218--231},
-  note={Poster Volume Ⅰ},
-  doi = {10.65286/icic.v22i1.71074},
+  year={2026}
 }
 ```
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
