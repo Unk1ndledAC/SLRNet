@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SLRNet 去雾</string>
+    <string name="stats_idle">正在加载模型…</string>
+    <string name="action_pause">暂停对比</string>
+    <string name="action_capture">拍照去雾</string>
+</resources>
